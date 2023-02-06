@@ -88,7 +88,7 @@ public class IntList {
         IntList last = A;
         while(last.rest != null){
             last = last.rest;
-        }
+        }Unique
         last.rest = B;
         return A;
     }
