@@ -85,5 +85,9 @@ public class LinkedListDeque<T> {
         return cur.item;
     }
 
+    public static void main(String[] args){
+
+    }
+
 
 }
