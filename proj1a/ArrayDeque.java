@@ -21,7 +21,7 @@ public class ArrayDeque<T> {
         for (int i = firstIndex + 1; i < items.length; i += 1) {
             newItems[i + newSize - items.length] = items[i];
         }
-        firstIndex += newSize - items.length;
+        firstIndex = changeIndex(firstIndex,newSize - items.length);
         items = newItems;
 
     }
