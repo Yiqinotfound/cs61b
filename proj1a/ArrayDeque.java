@@ -12,17 +12,17 @@ public class ArrayDeque<T> {
         lastIndex = 5;
     }
     /**要resize() 的时候肯定是first在last右边*/
-    private void resize() {
-        T[] newItems = (T[]) new Object[size * 2];
+    private void resize(int newSize) {
+        T[] newItems = (T[]) new Object[newSize];
         for (int i = 0; i < lastIndex; i += 1) {
             newItems[i] = items[i];
         }
 
         for (int i = firstIndex + 1; i < items.length; i += 1) {
-            newItems[i + items.length] = items[i];
+            newItems[i + newSize - items.length] = items[i];
         }
         items = newItems;
-        firstIndex += size;
+        firstIndex += newSize - items.length;
 
     }
 
@@ -38,8 +38,8 @@ public class ArrayDeque<T> {
         }
     }
     public void addFirst(T x) {
-        if (items[firstIndex] != null) {
-            resize();
+        if (size == items.length) {
+            resize(2 * size);
             items[firstIndex + size] = x;
             firstIndex = changeIndex(firstIndex, -1);
             size += 1;
@@ -51,8 +51,8 @@ public class ArrayDeque<T> {
     }
 
     public void addLast(T x) {
-        if (items[lastIndex] != null) {
-            resize();
+        if (size == items.length) {
+            resize(2 * size);
             items[lastIndex] = x;
             lastIndex = changeIndex(lastIndex, 1);
             size += 1;
@@ -87,21 +87,39 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst() {
+        if (size == 0) {
+            return null;
+        }
         int returnIndex = changeIndex(firstIndex, 1);
         T returnValue = items[returnIndex];
         firstIndex = changeIndex(firstIndex, 1);
+        size -= 1;
+        if ((size  < items.length / 4) && (items.length > 16)) {
+            resize((int)(0.5 * items.length + 1));
+        }
         return returnValue;
     }
 
     public T removeLast() {
+        if (size == 0) {
+            return null;
+        }
         int returnIndex = changeIndex(lastIndex, -1);
         T returnValue = items[returnIndex];
         lastIndex = changeIndex(lastIndex, -1);
+        size -= 1;
+        if ((size < (items.length / 4) ) && (items.length > 16)) {
+            resize((int)(0.5 * items.length + 1) );
+        }
         return returnValue;
     }
 
     public T get(int index) {
-        return items[firstIndex + index + 1];
+        if (index < 0 || index >= size) {
+            return null;
+        }
+        int realIndex = changeIndex(firstIndex, index + 1);
+        return items[realIndex];
     }
 
 }
