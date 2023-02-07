@@ -122,13 +122,7 @@ public class ArrayDeque<T> {
         return items[realIndex];
     }
 
-    public static void main(String[] args) {
-        ArrayDeque a = new ArrayDeque();
-        for (int i = 0; i < 16 ;i += 1) {
-            a.addLast(i);
-        }
-        System.out.println(a.get(0));
-    }
+
 }
 
 
