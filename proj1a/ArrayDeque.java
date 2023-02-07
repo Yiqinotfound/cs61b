@@ -108,31 +108,5 @@ public class ArrayDeque<T>{
         return items[firstIndex+index+1];
     }
 
-    public static void main(String[] args){
-        ArrayDeque<String> a = new ArrayDeque();
-        a.addLast("a");
-        a.addLast("b");
-        a.addFirst("c");
-        a.addLast("d");
-        a.addLast("e");
-        a.addFirst("f");
-        a.addLast("g");
-        a.addLast("h");
-        a.addLast("Z");
-        a.addLast("I");
-        a.addLast("J");
-        a.addLast("k");
-        a.addLast("L");
-        a.addLast("a");
-        a.addLast("a");
-        a.addLast("a");
-        a.addLast("a");
-        a.addLast("a");
-        a.addLast("a");
-        a.addLast("a");
-
-        a.printDeque();
-
-    }
 
 }
