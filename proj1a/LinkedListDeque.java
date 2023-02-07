@@ -1,6 +1,6 @@
 public class LinkedListDeque<T> {
     private TNode sentinel;
-    int size;
+    private int size;
     private class TNode {
         private T item;
         private TNode next;
@@ -91,21 +91,5 @@ public class LinkedListDeque<T> {
     public T getRecursive(int index) {
         return sentinel.getRecursiveHelper(index + 1);
     }
-    public static void main(String[] args) {
-        LinkedListDeque<String> L = new LinkedListDeque();
-        L.addLast("a");
-        L.addLast("b");
-        L.addLast("c");
-        L.addLast("d");
-        L.addFirst("e");
-        L.printDeque();
-        System.out.println();
-        L.removeFirst();
-        L.printDeque();
-        System.out.println();
-        L.removeLast();
-        L.printDeque();
-        System.out.println(L.getRecursive(2));
 
-    }
 }

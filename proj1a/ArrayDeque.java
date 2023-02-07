@@ -26,7 +26,7 @@ public class ArrayDeque<T> {
 
     }
 
-    public void moveFirstIndex(int d) {
+    private void moveFirstIndex(int d) {
         if (firstIndex + d >= 0 && firstIndex + d < items.length) {
             firstIndex = firstIndex + d;
         } else if (firstIndex + d < 0) {
@@ -36,7 +36,7 @@ public class ArrayDeque<T> {
         }
     }
 
-    public void moveLastIndex(int d) {
+    private void moveLastIndex(int d) {
         if (lastIndex + d >= 0 && lastIndex + d < items.length) {
             lastIndex = lastIndex + d;
         } else if (lastIndex + d < 0) {
@@ -106,37 +106,6 @@ public class ArrayDeque<T> {
     public T get(int index) {
         return items[firstIndex + index + 1];
     }
-
-    public static void main(String[] args) {
-
-        ArrayDeque<String> a = new ArrayDeque();
-        a.addLast("a");
-        a.addLast("b");
-        a.addFirst("c");
-        a.addLast("d");
-        a.addLast("e");
-        a.addFirst("f");
-        a.addLast("g");
-        a.addLast("h");
-        a.addLast("Z");
-        a.addLast("I");
-        a.addLast("J");
-        a.addLast("k");
-        a.addLast("L");
-        a.addLast("a");
-        a.addLast("a");
-        a.addLast("a");
-        a.addLast("a");
-        a.addLast("a");
-        a.addLast("a");
-        a.addLast("a");
-
-        a.printDeque();
-
-
-
-    }
-
 
 }
 
