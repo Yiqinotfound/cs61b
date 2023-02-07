@@ -26,36 +26,27 @@ public class ArrayDeque<T> {
 
     }
 
-    private void moveFirstIndex(int d) {
-        if (firstIndex + d >= 0 && firstIndex + d < items.length) {
-            firstIndex = firstIndex + d;
-        } else if (firstIndex + d < 0) {
-            firstIndex = items.length + (firstIndex + d);
-        } else if (firstIndex + d >= items.length) {
-            firstIndex = firstIndex + d - items.length;
-        }
-    }
 
-    private void moveLastIndex(int d) {
-        if (lastIndex + d >= 0 && lastIndex + d < items.length) {
-            lastIndex = lastIndex + d;
-        } else if (lastIndex + d < 0) {
-            lastIndex = items.length + (lastIndex + d);
-        } else if (lastIndex + d >= items.length) {
-            lastIndex = lastIndex + d - items.length;
+    private int changeIndex(int index, int change) {
+        int t = index + change;
+        if (t >= 0 && t < items.length) {
+            return t;
+        } else if (t < 0) {
+            return t + items.length;
+        } else {
+            return t - items.length;
         }
-
     }
     public void addFirst(T x) {
         if (items[firstIndex] != null) {
             resize();
             items[firstIndex + size] = x;
-            moveFirstIndex(-1);
+            firstIndex = changeIndex(firstIndex, -1);
             size += 1;
         } else {
             items[firstIndex] = x;
             size += 1;
-            moveFirstIndex(-1);
+            firstIndex = changeIndex(firstIndex, -1);
         }
     }
 
@@ -63,12 +54,12 @@ public class ArrayDeque<T> {
         if (items[lastIndex] != null) {
             resize();
             items[lastIndex] = x;
-            moveLastIndex(1);
+            lastIndex = changeIndex(lastIndex, 1);
             size += 1;
         } else {
             items[lastIndex] = x;
             size += 1;
-            moveLastIndex(1);
+            lastIndex = changeIndex(lastIndex, 1);
         }
     }
 
@@ -95,12 +86,18 @@ public class ArrayDeque<T> {
         }
     }
 
-    public void removeFirst() {
-        moveFirstIndex(1);
+    public T removeFirst() {
+        int returnIndex = changeIndex(firstIndex, 1);
+        T returnValue = items[returnIndex];
+        firstIndex = changeIndex(firstIndex, 1);
+        return returnValue;
     }
 
-    public void removeLast() {
-        moveLastIndex(-1);
+    public T removeLast() {
+        int returnIndex = changeIndex(lastIndex, -1);
+        T returnValue = items[returnIndex];
+        lastIndex = changeIndex(lastIndex, -1);
+        return returnValue;
     }
 
     public T get(int index) {
@@ -108,4 +105,6 @@ public class ArrayDeque<T> {
     }
 
 }
+
+
 
