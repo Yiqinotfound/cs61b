@@ -1,67 +1,67 @@
 
 public class ArrayDeque<T> {
-    private T[] items;
     private int size;
-    private int firstIndex;
-    private int lastIndex;
+    private int head;
+    private int tail;
+    private T[] items;
 
     public ArrayDeque() {
-        items = (T[]) new Object[8];
-        firstIndex = 4;
         size = 0;
-        lastIndex = 5;
-    }
-    /**要resize() 的时候肯定是first在last右边*/
-    private void resize(int newSize) {
-        T[] newItems = (T[]) new Object[newSize];
-        for (int i = 0; i < lastIndex; i += 1) {
-            newItems[i] = items[i];
-        }
-
-        for (int i = firstIndex + 1; i < items.length; i += 1) {
-            newItems[i + newSize - items.length] = items[i];
-        }
-        firstIndex = changeIndex(firstIndex,newSize - items.length);
-        items = newItems;
-
+        items = (T[]) new Object[8];
+        tail = 0;
+        head = 0;
     }
 
-
-    private int changeIndex(int index, int change) {
-        int t = index + change;
-        if (t >= 0 && t < items.length) {
-            return t;
-        } else if (t < 0) {
-            return t + items.length;
+    private int correctIndex(int index) {
+        if (index < 0) {
+            return items.length + index;
+        } else if (index > items.length - 1) {
+            return index % items.length;
         } else {
-            return t - items.length;
-        }
-    }
-    public void addFirst(T x) {
-        if (size == items.length) {
-            resize(2 * size);
-            items[firstIndex + size] = x;
-            firstIndex = changeIndex(firstIndex, -1);
-            size += 1;
-        } else {
-            items[firstIndex] = x;
-            size += 1;
-            firstIndex = changeIndex(firstIndex, -1);
+            return index;
         }
     }
 
-    public void addLast(T x) {
-        if (size == items.length) {
-            resize(2 * size);
-            items[lastIndex] = x;
-            lastIndex = changeIndex(lastIndex, 1);
-            size += 1;
-        } else {
-            items[lastIndex] = x;
-            size += 1;
-            lastIndex = changeIndex(lastIndex, 1);
+    private void resize(int a) {
+        T[] p = (T[]) new Object[a];
+        int j = correctIndex(head);
+        for (int i = size - 1; i >= 0; i--) {
+            p[i] = items[j];
+            j = correctIndex(j - 1);
         }
+        items = p;
+        head = correctIndex(size - 1);
+        tail = correctIndex(items.length - 1);
     }
+
+
+    public void addFirst(T argument) {
+        if (size >= items.length) {
+            resize(items.length * 2);
+        }
+        if (size == 0) {
+            items[correctIndex(head)] = argument;
+            tail = correctIndex(tail - 1);
+        } else {
+            items[correctIndex(head + 1)] = argument;
+            head = correctIndex(head + 1);
+        }
+        size = size + 1;
+    }
+
+    public void addLast(T argument) {
+        if (size >= items.length) {
+            resize(items.length * 2);
+        }
+        if (size == 0) {
+            items[correctIndex(head)] = argument;
+        } else {
+            items[correctIndex(tail)] = argument;
+        }
+        tail = correctIndex(tail - 1);
+        size = size + 1;
+    }
+
 
     public boolean isEmpty() {
         return size == 0;
@@ -72,56 +72,50 @@ public class ArrayDeque<T> {
     }
 
     public void printDeque() {
-        if (firstIndex < lastIndex) {
-            for (int i = firstIndex + 1; i < lastIndex; i += 1) {
-                System.out.print(items[i] + " ");
-            }
-        } else {
-            for (int i = firstIndex + 1; i < items.length; i += 1) {
-                System.out.print(items[i] + " ");
-            }
-            for (int i = 0; i < lastIndex; i += 1) {
-                System.out.print(items[i] + " ");
-            }
+        int j = correctIndex(head);
+        for (int i = 0; i < size; i++) {
+            System.out.print(items[j] + " ");
+            j = correctIndex(j - 1);
         }
     }
 
     public T removeFirst() {
         if (size == 0) {
             return null;
+        } else {
+            T p = items[correctIndex(head)];
+            head = correctIndex(head - 1);
+            size = size - 1;
+            if (items.length > 16 && size < (items.length / 4)) {
+                resize((int) (0.5 * items.length + 1));
+            }
+            return p;
         }
-        int returnIndex = changeIndex(firstIndex, 1);
-        T returnValue = items[returnIndex];
-        firstIndex = changeIndex(firstIndex, 1);
-        size -= 1;
-        if ((size  < items.length / 4) && (items.length > 16)) {
-            resize((int)(0.5 * items.length + 1));
-        }
-        return returnValue;
     }
 
     public T removeLast() {
         if (size == 0) {
             return null;
+        } else {
+            T p = items[correctIndex(tail + 1)];
+            tail = correctIndex(tail + 1);
+            size = size - 1;
+            if (items.length > 16 && size < (items.length / 4)) {
+                resize((int) (0.5 * items.length + 1));
+            }
+            return p;
         }
-        int returnIndex = changeIndex(lastIndex, -1);
-        T returnValue = items[returnIndex];
-        lastIndex = changeIndex(lastIndex, -1);
-        size -= 1;
-        if ((size < (items.length / 4) ) && (items.length > 16)) {
-            resize((int)(0.5 * items.length + 1) );
-        }
-        return returnValue;
     }
 
     public T get(int index) {
-        if (index < 0 || index >= size) {
+        if (index < 0 || index > size - 1) {
             return null;
+        } else {
+            int j = correctIndex(head - index);
+            T p  = items[j];
+            return p;
         }
-        int realIndex = changeIndex(firstIndex, index + 1);
-        return items[realIndex];
     }
-
 
 }
 
