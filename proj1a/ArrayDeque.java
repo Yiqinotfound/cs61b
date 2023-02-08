@@ -14,7 +14,7 @@ public class ArrayDeque<T> {
         return size;
     }
 
-    public int correctIndex(int index) {
+    private int correctIndex(int index) {
         if (index < 0) {
             return index + items.length;
         } else if (index >= items.length) {
@@ -66,11 +66,13 @@ public class ArrayDeque<T> {
      }
 
      public T removeFirst() {
-        if (isEmpty()) {
+        if (size == 0) {
             return null;
         } else {
             T returnValue = items[left];
-            left = correctIndex(left + 1);
+            if (size > 1) {
+                left = correctIndex(left + 1);
+            }
             size -= 1;
             if (items.length > 16 && size < items.length / 4) {
                 resize((int)(0.5 * items.length));
@@ -80,11 +82,13 @@ public class ArrayDeque<T> {
      }
 
      public T removeLast() {
-        if (isEmpty()) {
+        if (size == 0) {
             return null;
         } else {
             T returnValue = items[right];
-            right = correctIndex(right - 1);
+            if (size > 1) {
+                right = correctIndex(right - 1);
+            }
             size -= 1;
             if (items.length > 16 && size < items.length / 4) {
                 resize((int)(0.5*items.length));
@@ -109,6 +113,40 @@ public class ArrayDeque<T> {
      public boolean isEmpty() {
         return size == 0;
      }
+
+    public static void main(String[] args) {
+        ArrayDeque a = new ArrayDeque();
+        for (int i = 0; i < 16; i += 1) {
+            a.addLast(i);
+        }
+
+        for (int i = 0; i < 16; i += 1) {
+            a.addFirst(i);
+        }
+
+
+        a.printDeque();
+        System.out.println();
+        System.out.println(a.size());
+        System.out.println(a.get(1));
+
+        for (int i = 0; i < 32; i += 1) {
+            a.removeLast();
+        }
+        a.printDeque();
+        System.out.println(a.isEmpty());
+
+        System.out.println();
+
+        ArrayDeque b = new ArrayDeque();
+        System.out.println(b.removeFirst());
+        b.addFirst(0);
+        System.out.println(b.removeLast());
+        b.addFirst(2);
+        System.out.println(b.removeLast());
+
+
+    }
 
 
 }
