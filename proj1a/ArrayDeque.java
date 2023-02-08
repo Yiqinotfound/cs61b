@@ -24,7 +24,7 @@ public class ArrayDeque<T> {
         }
     }
 
-    public void resize(int newSize) {
+    private void resize(int newSize) {
         T[] newItems = (T[]) new Object[newSize];
         for (int i = 0; i < size; i += 1) {
             newItems[i] = items[correctIndex(i + left)];
