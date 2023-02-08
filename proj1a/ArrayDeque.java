@@ -114,39 +114,7 @@ public class ArrayDeque<T> {
         return size == 0;
      }
 
-    public static void main(String[] args) {
-        ArrayDeque a = new ArrayDeque();
-        for (int i = 0; i < 16; i += 1) {
-            a.addLast(i);
-        }
 
-        for (int i = 0; i < 16; i += 1) {
-            a.addFirst(i);
-        }
-
-
-        a.printDeque();
-        System.out.println();
-        System.out.println(a.size());
-        System.out.println(a.get(1));
-
-        for (int i = 0; i < 32; i += 1) {
-            a.removeLast();
-        }
-        a.printDeque();
-        System.out.println(a.isEmpty());
-
-        System.out.println();
-
-        ArrayDeque b = new ArrayDeque();
-        System.out.println(b.removeFirst());
-        b.addFirst(0);
-        System.out.println(b.removeLast());
-        b.addFirst(2);
-        System.out.println(b.removeLast());
-
-
-    }
 
 
 }
