@@ -39,30 +39,26 @@ public class ArrayDeque<T> {
             resize(2 * size);
             left = correctIndex(left - 1);
             items[left] = x;
-            size += 1;
         } else if (size == 0){
             items[left] = x;
-            size += 1;
         } else {
             left = correctIndex(left - 1);
             items[left] = x;
-            size += 1;
         }
+        size += 1;
     }
      public void addLast(T x) {
         if (size == items.length) {
             resize(2 * size);
             right = correctIndex(right + 1);
             items[right] = x;
-            size += 1;
         } else if (size == 0){
             items[right] = x;
-            size += 1;
         } else {
             right = correctIndex(right + 1);
             items[right] = x;
-            size += 1;
         }
+        size += 1;
      }
 
      public T removeFirst() {
@@ -113,8 +109,5 @@ public class ArrayDeque<T> {
      public boolean isEmpty() {
         return size == 0;
      }
-
-
-
 
 }
