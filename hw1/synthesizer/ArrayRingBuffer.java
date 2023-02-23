@@ -21,7 +21,7 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
         return new ArrayRingBufferIterator();
     }
 
-    public class ArrayRingBufferIterator implements Iterator<T>{
+    private class ArrayRingBufferIterator implements Iterator<T>{
         private int currentPositon;
 
         public ArrayRingBufferIterator() {
@@ -97,6 +97,9 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
      */
     public T peek() {
         // TODO: Return the first item. None of your instance variables should change.
+        if(isEmpty()) {
+            throw new RuntimeException("None in the array");
+        }
         return rb[first];
     }
 

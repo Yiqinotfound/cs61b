@@ -39,12 +39,12 @@ public class GuitarString {
         //       double r = Math.random() - 0.5;
         //
         //       Make sure that your random numbers are different from each other.
-        for (int i = 0; i <= buffer.capacity(); i += 1) {
+        for (int i = 0; i < buffer.capacity(); i += 1) {
             buffer.dequeue();
         }
+        Set<Double> randomNumbers = new HashSet<>();
         while (!buffer.isFull()) {
             double r = Math.random() - 0.5;
-            Set<Double> randomNumbers = new HashSet<>();
             if (!randomNumbers.contains(r)) {
                 randomNumbers.add(r);
                 buffer.enqueue(r);
