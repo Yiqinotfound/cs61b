@@ -17,6 +17,30 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
     /**
      * Create a new ArrayRingBuffer with the given capacity.
      */
+    public Iterator<T> iterator() {
+        return new ArrayRingBufferIterator();
+    }
+
+    public class ArrayRingBufferIterator implements Iterator<T>{
+        private int currentPositon;
+
+        public ArrayRingBufferIterator() {
+            currentPositon = first;
+        }
+        public boolean hasNext() {
+            return currentPositon != last;
+        }
+
+        public T next() {
+            T returnValue = rb[currentPositon];
+            currentPositon += 1;
+            if (currentPositon == capacity) {
+                currentPositon = 0;
+            }
+            return returnValue;
+        }
+
+    }
     public ArrayRingBuffer(int capacity) {
         // TODO: Create new array with capacity elements.
         //       first, last, and fillCount should all be set to 0.
@@ -56,6 +80,9 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
      */
     public T dequeue() {
         // TODO: Dequeue the first item. Don't forget to decrease fillCount and update
+        if(isEmpty()) {
+            throw new RuntimeException("Ring Buffer Underflow");
+        }
         T returnValue = rb[first];
         fillCount -= 1;
         first += 1;
