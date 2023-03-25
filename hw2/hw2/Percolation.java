@@ -44,7 +44,7 @@ public class Percolation {
             openSites += 1; // Increment number of open sites
             sites[xyTo1D(row, col)] = true; // Mark site as open
             if (row == 0) {
-                uf.union(0, xyTo1D(row, col));
+                uf.union(gridLength*gridLength, xyTo1D(row, col));
             }
             if (row == gridLength - 1) {
                 uf.union(gridLength * gridLength + 1, xyTo1D(row, col));
@@ -72,7 +72,7 @@ public class Percolation {
 
     public boolean isFull(int row, int col) {
         validate(row, col);
-        return uf.connected(0, xyTo1D(row, col));
+        return uf.connected(gridLength*gridLength, xyTo1D(row, col));
     }
 
     public int numberOfOpenSites() {
@@ -80,7 +80,7 @@ public class Percolation {
     }
 
     public boolean percolates() {
-        return uf.connected(0, gridLength * gridLength + 1);
+        return uf.connected(gridLength*gridLength, gridLength * gridLength + 1);
     }
 
     public static void main(String[] args) {
