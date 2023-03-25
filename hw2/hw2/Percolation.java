@@ -4,13 +4,13 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     // Length of the square grid "gridLength * gridLength"
-    private int gridLength;
+    private final int gridLength;
     // Array representing indexes of all sites (either it's open or blocked)
-    private boolean[] sites;
+    private  boolean[] sites;
     // Number of open sites
     private int openSites;
     // Weighted quick union find data structure
-    private WeightedQuickUnionUF uf;
+    private  WeightedQuickUnionUF uf;
 
     // Create N-by-N grid, with all sites initially blocked
     public Percolation(int N) {
@@ -20,7 +20,7 @@ public class Percolation {
         sites = new boolean[N * N];
         openSites = 0;
         uf = new WeightedQuickUnionUF(N * N + 2); // +2 for virtual top and bottom nodes
-        for (int i = 0; i < N * N - 1; i++) {
+        for (int i = 0; i < N * N ; i++) {
             sites[i] = false; // All sites are initially blocked
         }
     }
