@@ -17,9 +17,9 @@ public class Percolation {
         if (N <= 0)
             throw new IllegalArgumentException("N must be positive");
         gridLength = N;
-        sites = new boolean[N * N];
+        sites = new boolean[N * N ];
         openSites = 0;
-        uf = new WeightedQuickUnionUF(N * N + 2); // +2 for virtual top and bottom nodes
+        uf = new WeightedQuickUnionUF(N * N + 2 * N); // +2 for virtual top and bottom nodes
         for (int i = 0; i < N * N ; i++) {
             sites[i] = false; // All sites are initially blocked
         }
@@ -42,24 +42,25 @@ public class Percolation {
             return; // If site is already open, do nothing
         else {
             openSites += 1; // Increment number of open sites
-            sites[xyTo1D(row, col)] = true; // Mark site as open
+            int position  = xyTo1D(row, col);
+            sites[position] = true; // Mark site as open
             if (row == 0) {
-                uf.union(gridLength*gridLength, xyTo1D(row, col));
+                uf.union(gridLength*gridLength + col, position);
             }
             if (row == gridLength - 1) {
-                uf.union(gridLength * gridLength + 1, xyTo1D(row, col));
+                uf.union(gridLength * gridLength + gridLength + col,position);
             }
             if (row > 0 && isOpen(row - 1, col)) {
-                uf.union(xyTo1D(row, col), xyTo1D(row - 1, col));
+                uf.union(position, xyTo1D(row - 1, col));
             }
             if (row < gridLength - 1 && isOpen(row + 1, col)) {
-                uf.union(xyTo1D(row, col), xyTo1D(row + 1, col));
+                uf.union(position, xyTo1D(row + 1, col));
             }
             if (col > 0 && isOpen(row, col - 1)) {
-                uf.union(xyTo1D(row, col), xyTo1D(row, col - 1));
+                uf.union(position, xyTo1D(row, col - 1));
             }
             if (col < gridLength - 1 && isOpen(row, col + 1)) {
-                uf.union(xyTo1D(row, col), xyTo1D(row, col + 1));
+                uf.union(position, xyTo1D(row, col + 1));
             }
         }
 
@@ -72,7 +73,12 @@ public class Percolation {
 
     public boolean isFull(int row, int col) {
         validate(row, col);
-        return uf.connected(gridLength*gridLength, xyTo1D(row, col));
+        for (int i = gridLength*gridLength; i < gridLength*(gridLength + 1); i ++) {
+            if (uf.connected(i, xyTo1D(row, col))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int numberOfOpenSites() {
@@ -80,7 +86,13 @@ public class Percolation {
     }
 
     public boolean percolates() {
-        return uf.connected(gridLength*gridLength, gridLength * gridLength + 1);
+        for(int col = 0; col < gridLength; col ++) {
+            if(isFull(gridLength - 1, col)) {
+                return true;
+            }
+        }
+        return false;
+
     }
 
     public static void main(String[] args) {
