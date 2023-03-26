@@ -1,104 +1,135 @@
 package hw2;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
+import org.junit.Assert;
 
 public class Percolation {
-    // Length of the square grid "gridLength * gridLength"
-    private final int gridLength;
-    // Array representing indexes of all sites (either it's open or blocked)
-    private  boolean[] sites;
-    // Number of open sites
-    private int openSites;
-    // Weighted quick union find data structure
-    private  WeightedQuickUnionUF uf;
+    private int size;
+    private int[][] grid;
+    private int number;
+    private WeightedQuickUnionUF unions;
+    private WeightedQuickUnionUF unions2;
 
-    // Create N-by-N grid, with all sites initially blocked
-    public Percolation(int N) {
-        if (N <= 0)
-            throw new IllegalArgumentException("N must be positive");
-        gridLength = N;
-        sites = new boolean[N * N ];
-        openSites = 0;
-        uf = new WeightedQuickUnionUF(N * N + 2 * N); // +2 for virtual top and bottom nodes
-        for (int i = 0; i < N * N ; i++) {
-            sites[i] = false; // All sites are initially blocked
+
+    private boolean checkBoarder(int x, int y) {
+        if (x < 0 || x > this.size - 1) {
+            return false;
+        } else if (y < 0 || y > this.size - 1) {
+            return false;
+        }
+        return true;
+    }
+
+    private void connects(int x, int y) {
+        if (checkBoarder(x - 1, y) && this.grid[x - 1][y] == 1) {
+            unions.union(xyTo1d(x, y), xyTo1d(x - 1, y));
+            unions2.union(xyTo1d(x, y), xyTo1d(x - 1, y));
+
+        }
+
+        if (checkBoarder(x + 1, y) && this.grid[x + 1][y] == 1) {
+            unions.union(xyTo1d(x, y), xyTo1d(x + 1, y));
+            unions2.union(xyTo1d(x, y), xyTo1d(x + 1, y));
+        }
+
+        if (checkBoarder(x, y - 1) && this.grid[x][y - 1] == 1) {
+            unions.union(xyTo1d(x, y), xyTo1d(x, y - 1));
+            unions2.union(xyTo1d(x, y), xyTo1d(x, y - 1));
+        }
+
+        if (checkBoarder(x, y + 1) && this.grid[x][y + 1] == 1) {
+            unions.union(xyTo1d(x, y), xyTo1d(x, y + 1));
+            unions2.union(xyTo1d(x, y), xyTo1d(x, y + 1));
         }
     }
 
-    private int xyTo1D(int row, int col) {
-        return row * gridLength + col;
+    private int xyTo1d(int x, int y) {
+        return x * this.size + y;
     }
 
-    private void validate(int row, int col) {
-        if (row < 0 || col < 0 || row > gridLength - 1 || col > gridLength - 1) {
-            throw new IndexOutOfBoundsException("Index is out of range");
+    private void clear() {
+        for (int i = 0; i < this.size; i++) {
+            for (int j = 0; j < this.size; j++) {
+                this.grid[i][j] = 0;
+            }
         }
     }
 
-    // Open the site (row, col) if it is not open already
-    public void open(int row, int col) {
-        validate(row, col); // Check if row and col are valid indices
-        if (isOpen(row, col))
-            return; // If site is already open, do nothing
-        else {
-            openSites += 1; // Increment number of open sites
-            int position  = xyTo1D(row, col);
-            sites[position] = true; // Mark site as open
+    public Percolation(int N) { // create N-by-N grid, with all sites initially blocked
+        if (N < 0) {
+            throw new IllegalArgumentException("N must > 0");
+        }
+
+        this.unions = new WeightedQuickUnionUF(N * N + 2);
+        this.unions2 = new WeightedQuickUnionUF(N * N + 1);
+        this.number = 0;
+        this.grid = new int[N][N];
+        this.size = N;
+        clear();
+    }
+
+
+    public void open(int row, int col) { // open the site (row, col) if it is not open already
+        if (!checkBoarder(row, col)) {
+            return;
+        }
+
+        if (!isOpen(row, col)) {
+            this.grid[row][col] = 1;
+            this.number++;
+            connects(row, col);
             if (row == 0) {
-                uf.union(gridLength*gridLength + col, position);
+                unions.union(xyTo1d(row, col), this.size * this.size);
+                unions2.union(xyTo1d(row, col), this.size * this.size);
             }
-            if (row == gridLength - 1) {
-                uf.union(gridLength * gridLength + gridLength + col,position);
+            if (row == this.size - 1) {
+                unions.union(xyTo1d(row, col), this.size * this.size + 1);
             }
-            if (row > 0 && isOpen(row - 1, col)) {
-                uf.union(position, xyTo1D(row - 1, col));
-            }
-            if (row < gridLength - 1 && isOpen(row + 1, col)) {
-                uf.union(position, xyTo1D(row + 1, col));
-            }
-            if (col > 0 && isOpen(row, col - 1)) {
-                uf.union(position, xyTo1D(row, col - 1));
-            }
-            if (col < gridLength - 1 && isOpen(row, col + 1)) {
-                uf.union(position, xyTo1D(row, col + 1));
-            }
+
         }
 
     }
 
-    public boolean isOpen(int row, int col) {
-        validate(row, col); // Check if row and col are valid indices
-        return sites[xyTo1D(row, col)];
+    public boolean isOpen(int row, int col) { // is the site (row, col) open?
+        if (!checkBoarder(row, col)) {
+            return false;
+        }
+
+        return this.grid[row][col] == 1;
     }
 
-    public boolean isFull(int row, int col) {
-        validate(row, col);
-        for (int i = gridLength*gridLength; i < gridLength*(gridLength + 1); i ++) {
-            if (uf.connected(i, xyTo1D(row, col))) {
-                return true;
-            }
+    public boolean isFull(int row, int col) { // is the site (row, col) full?
+        if (!checkBoarder(row, col)) {
+            return false;
         }
+
+        if (!isOpen(row, col)) {
+            return false;
+        }
+
+        if (unions2.connected(xyTo1d(row, col), this.size * this.size)) {
+            return true;
+        }
+
         return false;
     }
 
-    public int numberOfOpenSites() {
-        return openSites;
+    public int numberOfOpenSites() { // number of open sites
+        return this.number;
     }
 
-    public boolean percolates() {
-        for(int col = 0; col < gridLength; col ++) {
-            if(isFull(gridLength - 1, col)) {
-                return true;
-            }
-        }
-        return false;
-
+    public boolean percolates() { // does the system percolate?
+        return unions.connected(this.size * this.size, this.size * this.size + 1);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) { // use for unit testing (not required)
 
+        Percolation pf = new Percolation(5);
+        pf.open(0, 3);
+        pf.open(1, 3);
+        Assert.assertEquals(false, pf.percolates());
+        Assert.assertEquals(true, pf.isFull(0, 4));
     }
-
-    // Other methods omitted for brevity
-
 }
+
+
