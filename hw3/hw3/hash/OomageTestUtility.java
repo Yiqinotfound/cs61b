@@ -1,6 +1,8 @@
 package hw3.hash;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OomageTestUtility {
     public static boolean haveNiceHashCodeSpread(List<Oomage> oomages, int M) {
@@ -12,6 +14,24 @@ public class OomageTestUtility {
          * and ensure that no bucket has fewer than N / 50
          * Oomages and no bucket has more than N / 2.5 Oomages.
          */
-        return false;
+        int N = oomages.size();
+        double min = (double)N / 50;
+        double max = (double) N/2.5;
+        HashMap<Integer,Integer> map = new HashMap<>();
+        for (Oomage oo : oomages) {
+            int bucketNumber = (oo.hashCode() & 0x7FFFFFFF) % M;
+            if (!map.containsKey(bucketNumber)){
+                map.put(bucketNumber,1);
+            }
+            else {
+                map.put(bucketNumber,map.get(bucketNumber) + 1);
+            }
+        }
+        for (Map.Entry<Integer,Integer> entry : map.entrySet()) {
+            if (entry.getValue() < min || entry.getValue() > max) {
+                return false;
+            }
+        }
+        return true;
     }
 }
