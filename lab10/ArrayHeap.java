@@ -27,8 +27,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      * Returns the index of the node to the left of the node at i.
      */
     private static int leftIndex(int i) {
-        /* TODO: Your code here! */
-        return 0;
+        return 2*i;
     }
 
     /**
@@ -36,7 +35,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int rightIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return 2*i + 1;
     }
 
     /**
@@ -44,7 +43,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int parentIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return i /2;
     }
 
     /**
@@ -107,8 +106,15 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
-        /** TODO: Your code here. */
-        return;
+        Node thisNode = getNode(index);
+        Node parentNode = getNode(parentIndex(index));
+        if (parentNode == null || thisNode == null) {
+            return;
+        }
+        if (parentNode.myPriority > thisNode.myPriority) {
+           swap(index,parentIndex(index));
+           swim(parentIndex(index));
+        }
     }
 
     /**
@@ -117,9 +123,17 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     private void sink(int index) {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
-
-        /** TODO: Your code here. */
-        return;
+        Node thisNode = getNode(index);
+        Node leftNode = getNode(leftIndex(index));
+        Node rightNode = getNode(rightIndex(index));
+        if (thisNode == null || leftNode == null ) {
+            return;
+        }
+        int minIndex = min(leftIndex(index), rightIndex(index));
+        if (thisNode.myPriority > getNode(minIndex).myPriority) {
+            swap(index, minIndex);
+            sink(minIndex);
+        }
     }
 
     /**
@@ -132,8 +146,11 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         if (size + 1 == contents.length) {
             resize(contents.length * 2);
         }
+        Node newNode = new Node(item, priority);
+        contents[size + 1] = newNode;
+        size += 1;
+        swim(size);
 
-        /* TODO: Your code here! */
     }
 
     /**
@@ -143,7 +160,10 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public T peek() {
         /* TODO: Your code here! */
-        return null;
+        if (contents[1] == null) {
+            return null;
+        }
+        return contents[1].item();
     }
 
     /**
@@ -158,7 +178,16 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public T removeMin() {
         /* TODO: Your code here! */
-        return null;
+        if (size == 0) {
+            return null;
+        }
+        T returnItem = contents[1].item();
+        swap(1, size);
+        contents[size] = null;
+        size --;
+        sink(1);
+        return returnItem;
+
     }
 
     /**
@@ -181,7 +210,29 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public void changePriority(T item, double priority) {
         /* TODO: Your code here! */
+        changePriorityHelper(item,priority,1);
         return;
+    }
+
+    private void changePriorityHelper(T item, double priority, int index) {
+        Node currNode = getNode(index);
+        if(currNode == null ) {
+            return;
+        }
+        if (currNode.item().equals(item)) {
+            currNode.myPriority = priority;
+            return;
+        } else {
+            if (getNode(leftIndex(index)) == null) {
+                return;
+            } else if (getNode(rightIndex(index)) == null) {
+                changePriorityHelper(item,priority,leftIndex(index));
+            } else {
+                changePriorityHelper(item,priority,leftIndex(index));
+                changePriorityHelper(item,priority,rightIndex(index));
+            }
+        }
+
     }
 
     /**
